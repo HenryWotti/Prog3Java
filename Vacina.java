@@ -2,6 +2,9 @@ public class Vacina {
     private String nomeVacina;
     private String fabricante;
     private String doenca;
+    private String link;
+    private int intervaloMax;
+    private int intervaloMin;
 
     public Vacina(String nomeVacina, String doenca) {
         this.nomeVacina = nomeVacina;
@@ -12,8 +15,8 @@ public class Vacina {
         return this.nomeVacina;
     }
 
-    public void setNomeVacina(String nomeVacina) {
-        this.nomeVacina = nomeVacina;
+    public String getDoenca() {
+        return this.doenca;
     }
 
     public String getFabricante() {
@@ -24,12 +27,33 @@ public class Vacina {
         this.fabricante = fabricante;
     }
 
-    public String getDoenca() {
-        return this.doenca;
+    public void setLink(String link) {
+        this.link = link;
     }
 
-    public void setDoenca(String doenca) {
-        this.doenca = doenca;
+    public String getLink() {
+        return this.link;
+    }
+
+    public int getIntervaloMax() {
+        return this.intervaloMax;
+    }
+
+    public int getIntervaloMin() {
+        return this.intervaloMin;
+    }
+
+    public void setIntervaloMax(int intervaloMax) {
+        this.intervaloMax = intervaloMax;
+    }
+
+    public void setIntervaloMin(int intervaloMin) {
+        this.intervaloMin = intervaloMin;
+    }
+
+    @Override
+    public String toString() {
+        return nomeVacina + ";" + doenca + ";" + fabricante;
     }
 
 }

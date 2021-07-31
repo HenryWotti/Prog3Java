@@ -11,16 +11,12 @@ public class Ubs {
         return this.nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getSigla() {
         return this.sigla;
     }
 
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
+    @Override
+    public String toString() {
+        return nome + ";" + sigla;
     }
-
 }
