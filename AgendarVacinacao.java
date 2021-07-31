@@ -23,32 +23,16 @@ public class AgendarVacinacao {
         return this.dataHora;
     }
 
-    public void setDataHora(Date dataHora) {
-        this.dataHora = dataHora;
-    }
-
     public Ubs getUbs() {
         return this.ubs;
-    }
-
-    public void setUbs(Ubs ubs) {
-        this.ubs = ubs;
     }
 
     public String getNome() {
         return this.nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public Date getDataNascimento() {
         return this.dataNascimento;
-    }
-
-    public void setDataNascimento(Date dataNascimento) {
-        this.dataNascimento = dataNascimento;
     }
 
     public String getCpf() {
@@ -71,16 +55,21 @@ public class AgendarVacinacao {
         this.statusEfetuado = true;
     }
 
-    public void printaStatus() {
-        if (this.statusEfetuado == true) {
+    @Override
+    public String toString() {
+        return ubs + ";" + nome + ";" + cpf + ";" + "StatusAgendamento:" + statusAgendamento + ";" + "StatusEfetuado:"
+                + statusEfetuado + ";" + dataHora + ";" + dataNascimento + ";"
+                + printaStatus(statusEfetuado, statusAgendamento);
+    }
 
-            System.out.println("Situação da Vacinação: Efetuada");
-        }
-        if (this.statusAgendamento == false) {
-            System.out.println("Situação da Vacinação: Cancelada");
-        }
-        if (this.statusEfetuado == false && this.statusAgendamento == true) {
-            System.out.println("Situação da Vacinação: Agendada");
+    public String printaStatus(boolean statusEfetuado, boolean statusAgendado) {
+        if (statusEfetuado == true) {
+            return "Situação da Vacinação: Efetuada";
+        } else if (statusEfetuado == false && statusAgendado == true) {
+            return "Situação da Vacinação: Agendada";
+        } else {
+            return "Situação da Vacinação: Cancelada";
         }
     }
+
 }
