@@ -1,4 +1,6 @@
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Ubs {
     private String nome;
@@ -8,6 +10,7 @@ public class Ubs {
     private int totalCancelamentos = 0;
     private Date periodoInicial;
     private Date periodoFinal;
+    
     
     public int getTotalVacinados() {
 		return totalVacinados;
@@ -76,6 +79,7 @@ public class Ubs {
         }
         
    }
+  
     @Override
     public String toString() {
         return nome + ";" + sigla + ";" + totalAgendados + ";" + totalVacinados + "/";

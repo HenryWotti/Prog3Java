@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Menu {
 
@@ -15,8 +17,9 @@ public class Menu {
     SimpleDateFormat formato2 = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     Map<String, Ubs> mapaUbs = new HashMap<>();
+    ArrayList<Ubs> listaUbs = new ArrayList<Ubs>();
     Map<String, ServidorMunicipal> mapaServidor = new HashMap<>();
-    Map<Vacina, Lote> mapaLote = new HashMap<>();
+    ArrayList<Lote> listaLotes = new ArrayList<Lote>();
     Map<String, Vacina> mapaVacina = new HashMap<>();
     Map<String, AgendarVacinacao> mapaAgendamento = new HashMap<>();
 
@@ -40,7 +43,8 @@ public class Menu {
                 // cadastrando UBS em uma mapa de UBSs
                 mapaUbs.put(sigla, new Ubs(nome, sigla));
                 // através da chave sigla, é possivel acessar a ubs do mapa de UBSs
-                /* Ubs ubs = mapaUbs.get(sigla); */
+                Ubs ubs = mapaUbs.get(sigla);
+                listaUbs.add(ubs); //adiciona as Ubs em uma lista para ordenacao posterior :)
 
                 // System.out.print("Nome UBS:");
                 // System.out.println(ubs.getNome());
@@ -90,7 +94,7 @@ public class Menu {
                 break;
 
             case 3:
-                System.out.println("Lotes até agora:");
+                System.out.println("Vacinas até agora:");
                 for (Map.Entry<String, Vacina> entry : mapaVacina.entrySet()) {
                     System.out.println(entry.getValue());
                 }
@@ -153,7 +157,7 @@ public class Menu {
                 }
                 vacina.setEfeitosColaterais(listaDeEfeitos); //atribui-se efeitos colaterais registrados a vacina
                 Vacina vac = mapaVacina.get("coronavac");
-                System.out.println(vac.getEfeitosColaterais().toString());
+                //System.out.println(vac.getEfeitosColaterais().toString());
                 
 
                 // System.out.print("Nome Vacina: ");
@@ -166,9 +170,11 @@ public class Menu {
 
             case 4:
                 System.out.println("Lotes até agora:");
-                for (Map.Entry<Vacina, Lote> entry : mapaLote.entrySet()) {
-                    System.out.println(entry.getValue());
-                }
+                //for(int i = 0; i < listaLotes.size(); i++) {
+                	System.out.println(listaLotes);
+                //}
+                
+                System.out.println(listaLotes);
                 System.out.println(
                         "Digite o NOME da vacina, SIGLA da ubs, DATA, QUANTIDADE entregue, CUSTOPORDOSE e FONTE");
                 String nomeVac;
@@ -186,15 +192,16 @@ public class Menu {
                 lixo = scan.nextLine();
                 fonte = scan.nextLine();
 
+                
+                
                 // achar a UBS pela siglaUnidade
                 Ubs ubsLote = mapaUbs.get(siglaUnidade);
                 // achar a vacina pela nomeVac
                 Vacina vacinaDoLote = mapaVacina.get(nomeVac);
-
-                mapaLote.put(vacinaDoLote, new Lote(vacinaDoLote, ubsLote, dataEntrega, quantidade, custoPorDose, fonte));
-
-                /* Lote lote = mapaLote.get(vacinaLote); */
-
+                
+                Lote lote = new Lote(vacinaDoLote, ubsLote, dataEntrega, quantidade, custoPorDose, fonte);
+                listaLotes.add(lote);
+                
                 // System.out.print("Data de entrega: ");
                 // System.out.println(formato.format(lote.getData()));
                 // System.out.print("Quantidade entregue:");
@@ -223,6 +230,8 @@ public class Menu {
                 Date dataNascimento;
                 String cpf1;
 
+                
+                
                 dataHora = formato2.parse(scan.nextLine());
                 siglaU = scan.nextLine();
                 nomePessoa = scan.nextLine();
@@ -344,6 +353,9 @@ public class Menu {
                         System.out.println(entry.getValue());
                         System.out.println();
                     }
+            		ordenaUbs(listaUbs);
+            		System.out.println(listaUbs);
+            		
             		break;
             	case 2:
             		System.out.println("Entregas de Vacina por Doença");
@@ -372,6 +384,11 @@ public class Menu {
         }
     }
 
+    public void ordenaUbs(ArrayList<Ubs> listaUbs) {
+    	Collections.sort(listaUbs, Comparator.comparing(Ubs::getTotalAgendados).reversed().thenComparing(Ubs::getSigla));
+    	//Collections.reverse(listaUbs);
+    }
+    
     // public void printaStatus(boolean statusEfetuado, boolean statusAgendado) {
     // if (statusEfetuado == true) {
 

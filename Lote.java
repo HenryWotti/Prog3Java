@@ -7,6 +7,7 @@ public class Lote {
     private int quantidade;
     private double custoPorDose;
     private String fonte;
+    
 
     public Lote(Vacina vacina, Ubs ubs, Date data, int quantidade, double custoPorDose, String fonte) {
         this.vacina = vacina;
