@@ -99,8 +99,10 @@ public class Menu {
                 String fabricante;
                 String doenca;
                 String link;
+                String efeito;
                 int intervaloMin;
                 int intervaloMax;
+                ArrayList<String> listaDeEfeitos = new ArrayList<String>();
 
                 nomeVacina = scan.nextLine();
                 doenca = scan.nextLine();
@@ -141,9 +143,18 @@ public class Menu {
                 int efeitoColateral;
                 efeitoColateral = scan.nextInt();
                 lixo = scan.nextLine();
-                if (efeitoColateral == 1) {
-
+                while (efeitoColateral == 1) {
+                	System.out.println("Informe um efeito colateral e a porcentagem de ocorrência");
+                	efeito = scan.nextLine();
+                	listaDeEfeitos.add(efeito); //guarda efeito colateral e porcentagem de ocorrencia
+                	System.out.println("Possui mais efeitos colaterais? Digite 1 para sim e 0 para nao");
+                	efeitoColateral = scan.nextInt(); //atualiza variavel do while
+                    lixo = scan.nextLine();	
                 }
+                vacina.setEfeitosColaterais(listaDeEfeitos); //atribui-se efeitos colaterais registrados a vacina
+                Vacina vac = mapaVacina.get("coronavac");
+                System.out.println(vac.getEfeitosColaterais().toString());
+                
 
                 // System.out.print("Nome Vacina: ");
                 // System.out.println(vacina.getNomeVacina());
@@ -178,9 +189,9 @@ public class Menu {
                 // achar a UBS pela siglaUnidade
                 Ubs ubsLote = mapaUbs.get(siglaUnidade);
                 // achar a vacina pela nomeVac
-                Vacina vacinaLote = mapaVacina.get(nomeVac);
+                Vacina vacinaDoLote = mapaVacina.get(nomeVac);
 
-                mapaLote.put(vacinaLote, new Lote(vacinaLote, ubsLote, dataEntrega, quantidade, custoPorDose, fonte));
+                mapaLote.put(vacinaDoLote, new Lote(vacinaDoLote, ubsLote, dataEntrega, quantidade, custoPorDose, fonte));
 
                 /* Lote lote = mapaLote.get(vacinaLote); */
 
@@ -219,7 +230,14 @@ public class Menu {
                 cpf1 = scan.nextLine();
 
                 Ubs ubsAgendamento = mapaUbs.get(siglaU);
+                
+                ubsAgendamento.contaAgendados();
 
+                if(mapaAgendamento == null) { //caso seja o primeiro cadastro a ser realizado
+                	ubsAgendamento.setPeriodoInicial(dataHora);
+                	ubsAgendamento.setPeriodoFinal(dataHora);
+                }
+                
                 mapaAgendamento.put(cpf1,
                         new AgendarVacinacao(dataHora, ubsAgendamento, nomePessoa, dataNascimento, cpf1));
 
@@ -252,6 +270,8 @@ public class Menu {
 
                 // achar o agendamento pela chave cpf
                 AgendarVacinacao agendamentoCancela = mapaAgendamento.get(cpf2);
+                Ubs ubsRegistrada = agendamentoCancela.getUbs();
+                ubsRegistrada.contaCancelados();
 
                 // método que cancela um agendamento.
                 agendamentoCancela.cancela();
@@ -284,6 +304,9 @@ public class Menu {
 
                 // achar o agendamento pelo cpf
                 AgendarVacinacao agendamentoEfetua = mapaAgendamento.get(cpf3);
+                
+                Ubs ubsRegistrad = agendamentoEfetua.getUbs();
+                ubsRegistrad.contaVacinados();
 
                 // registra agendamento como vacinacao efetuada
                 agendamentoEfetua.efetuaVacinacao();
@@ -305,7 +328,44 @@ public class Menu {
                 break;
 
             case 8:
-                break;
+            	System.out.println("Relatorio");
+            	System.out.println("Qual relatório gostaria que fosse exibido?");
+            	System.out.println("1 - Vacinação por UBS");
+            	System.out.println("2 - Entregas de Vacina por Doença");
+            	System.out.println("3 - Comunicados aos cidadão vacinados");
+            	
+            	
+            	int option = scan.nextInt();
+                lixo = scan.nextLine();
+            	switch(option) {
+            	case 1: 
+            		System.out.println("Vacinação por UBS");
+            		for (Map.Entry<String, Ubs> entry : mapaUbs.entrySet()) {
+                        System.out.println(entry.getValue());
+                        System.out.println();
+                    }
+            		break;
+            	case 2:
+            		System.out.println("Entregas de Vacina por Doença");
+            		break;
+            	case 3:
+            		System.out.println("Comunicados aos cidadão vacinados");
+            		break;
+            	default:
+            		break;
+            		
+            	}
+            	
+            	
+                break;              
+            case 9:
+            	System.out.println("Salvar");
+            	break;
+            case 10:
+            	System.out.println("Carregar");
+            	break;
+            case 11: //encerra programa
+            	break;
 
             default:
                 break;

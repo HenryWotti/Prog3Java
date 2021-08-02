@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.text.ParseException;
 import java.util.Locale;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
@@ -24,7 +25,7 @@ public class Main {
 
         // o switch está dentro de um loop pois queremos realizar diversas operações
         // consecutivas no programa
-        while (opcao != 8) {
+        while (opcao != 11) {
             System.out.println("Digite o número correspondente a operação desejada:");
             System.out.println("1) Cadastrar Unidade Básica de Saúde");
             System.out.println("2) Cadastrar Servidor Municipal");
@@ -33,13 +34,19 @@ public class Main {
             System.out.println("5) Agendar Vacinação");
             System.out.println("6) Cancelar Agendamento de Vacinação");
             System.out.println("7) Registar Vacinação Efetuada");
-            System.out.println("8) Sair do Programa");
+            System.out.println("8) Relatório");
+            System.out.println("9) Salvar");
+            System.out.println("10) Carregar");
+            System.out.println("11) Encerrar Programa");
 
             opcao = scan.nextInt();
             System.out.println("opcao:" + opcao);
             lixo = scan.nextLine();
             m.escolheMenu(opcao);
         }
+        
+        
+        
         System.out.println("Programa encerrado!");
         scan.close();
     }

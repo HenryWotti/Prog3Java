@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Vacina {
     private String nomeVacina;
     private String fabricante;
@@ -5,6 +7,7 @@ public class Vacina {
     private String link;
     private int intervaloMax;
     private int intervaloMin;
+    private ArrayList<String> efeitosColaterais;
 
     public Vacina(String nomeVacina, String doenca) {
         this.nomeVacina = nomeVacina;
@@ -55,5 +58,13 @@ public class Vacina {
     public String toString() {
         return nomeVacina + ";" + doenca + ";" + fabricante;
     }
+
+	public ArrayList<String> getEfeitosColaterais() {
+		return efeitosColaterais;
+	}
+
+	public void setEfeitosColaterais(ArrayList<String> efeitosColaterais) {
+		this.efeitosColaterais = efeitosColaterais;
+	}
 
 }
