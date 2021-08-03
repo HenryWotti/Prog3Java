@@ -22,6 +22,8 @@ public class Menu {
     ArrayList<Lote> listaLotes = new ArrayList<Lote>();
     Map<String, Vacina> mapaVacina = new HashMap<>();
     Map<String, AgendarVacinacao> mapaAgendamento = new HashMap<>();
+    ArrayList<String> listaNomeDoencas = new ArrayList<String>();
+    ArrayList<Vacina> listaVacinas = new ArrayList<Vacina>();
 
     String lixo;
 
@@ -107,14 +109,27 @@ public class Menu {
                 int intervaloMin;
                 int intervaloMax;
                 ArrayList<String> listaDeEfeitos = new ArrayList<String>();
+                
 
                 nomeVacina = scan.nextLine();
                 doenca = scan.nextLine();
-                // fabricante = scan.nextLine();
-
+                
+                int cont = 0;
+                for (int i = 0; i < listaNomeDoencas.size(); i++) {
+                    if(doenca.compareTo(listaNomeDoencas.get(i)) != 0) { //para adicionar doenca na lista sem repetir
+                    	cont++;
+                    }
+                }
+                if(cont == listaNomeDoencas.size()) {
+            		listaNomeDoencas.add(doenca); //adicionando na lista de nome de doencas para ordenar e imprimir o relatorio 2
+            	}
+                
                 // colocar vacina em uma mapa de vacinas, sua chave será seu nome
                 mapaVacina.put(nomeVacina, new Vacina(nomeVacina, doenca));
                 Vacina vacina = mapaVacina.get(nomeVacina);
+                
+                listaVacinas.add(vacina); //adiciona vacina na lista de vacinas
+                
                 System.out.println("Deseja cadastrar a fabricante? Digite 1 para sim ou 0 para nao");
                 int cadastroOpcional2;
                 cadastroOpcional2 = scan.nextInt();
@@ -174,7 +189,6 @@ public class Menu {
                 	System.out.println(listaLotes);
                 //}
                 
-                System.out.println(listaLotes);
                 System.out.println(
                         "Digite o NOME da vacina, SIGLA da ubs, DATA, QUANTIDADE entregue, CUSTOPORDOSE e FONTE");
                 String nomeVac;
@@ -358,7 +372,55 @@ public class Menu {
             		
             		break;
             	case 2:
+            		int contTotalDoses = 0;
+            		int contDosesFederal = 0;
+            		double contCustoFederal = 0;
+            		int contDosesEstadual = 0;
+            		double contCustoEstadual = 0;
+            		String federal = "f";
+            		double mediaFederal = 0;
+            		double mediaEstadual = 0;
+            		
             		System.out.println("Entregas de Vacina por Doença");
+            		ordenaVacina(listaVacinas);
+            		for(int i = 0; i < listaNomeDoencas.size(); i++) {
+            			System.out.println(listaNomeDoencas.get(i));
+            			
+            			for (int j = 0; j < listaVacinas.size(); j++) {
+                           
+            				if(listaNomeDoencas.get(i).compareTo(listaVacinas.get(j).getDoenca()) == 0) {
+                            	System.out.println(listaVacinas.get(j));
+                            	
+                            	for(int k = 0; k < listaLotes.size(); k++) {
+                            		if(listaVacinas.get(j).getNomeVacina().compareTo(listaLotes.get(k).getVacina().getNomeVacina()) == 0) {
+                            			contTotalDoses += listaLotes.get(k).getQuantidade(); //quantidade total de doses recebidas para a doenca
+                            			
+                            			if(listaLotes.get(k).getFonte().compareTo(federal) == 0){
+                            				contDosesFederal+= listaLotes.get(k).getQuantidade(); //total de doses vindas do governo federal
+                            				contCustoFederal += listaLotes.get(k).getCustoPorDose() *  listaLotes.get(k).getQuantidade(); //soma dos custos das doses federais com peso
+                            			}else {
+                            				contDosesEstadual += listaLotes.get(k).getQuantidade(); //total de doses vindas do governo estadual
+                            				contCustoEstadual += listaLotes.get(k).getCustoPorDose() *  listaLotes.get(k).getQuantidade(); //soma dos custos das doses estaduais com peso
+                            			}                         			
+                            			
+                            		}
+                            	}
+                            	mediaFederal = contCustoFederal / contDosesFederal; //custo medio das doses entregues pelo governo federal
+                            	mediaEstadual = contCustoEstadual / contDosesEstadual; //custo medio das doses entregues pelo governo estadual
+                            	                         	
+                            	
+                            }
+                        }
+            			System.out.println("Total de doses para essa doenca:" + contTotalDoses);
+                    	System.out.println("Media custo Federal" + mediaFederal);
+                    	System.out.println("Media custo Estadual" + mediaEstadual);
+                    	contDosesFederal = 0;
+                    	contDosesEstadual = 0;
+                    	contCustoFederal = 0;
+                    	contCustoEstadual = 0;
+                    	contTotalDoses = 0;
+            		}
+            		
             		break;
             	case 3:
             		System.out.println("Comunicados aos cidadão vacinados");
@@ -386,8 +448,17 @@ public class Menu {
 
     public void ordenaUbs(ArrayList<Ubs> listaUbs) {
     	Collections.sort(listaUbs, Comparator.comparing(Ubs::getTotalAgendados).reversed().thenComparing(Ubs::getSigla));
-    	//Collections.reverse(listaUbs);
     }
+    
+//    public void ordenaDoenca(ArrayList<String> listaDoenca) {
+//    	Collections.sort(listaDoenca);
+//    }
+    
+    public void ordenaVacina(ArrayList<Vacina> listaVacina) {
+    	Collections.sort(listaVacina, Comparator.comparing(Vacina::getNomeVacina));
+    }
+    
+    
     
     // public void printaStatus(boolean statusEfetuado, boolean statusAgendado) {
     // if (statusEfetuado == true) {
