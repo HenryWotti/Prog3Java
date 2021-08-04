@@ -1,12 +1,22 @@
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+
 
 public class Menu {
 
@@ -24,7 +34,12 @@ public class Menu {
     Map<String, AgendarVacinacao> mapaAgendamento = new HashMap<>();
     ArrayList<String> listaNomeDoencas = new ArrayList<String>();
     ArrayList<Vacina> listaVacinas = new ArrayList<Vacina>();
-
+    ArrayList<AgendarVacinacao> listaCidadaosAgendados = new ArrayList<AgendarVacinacao>();
+    
+    String nomeArq;
+    File arq = new File(nomeArq);
+    //PrintWriter gravarArq = new PrintWriter(arq);
+    
     String lixo;
 
     public void escolheMenu(int opcao) throws ParseException {
@@ -243,6 +258,7 @@ public class Menu {
                 String nomePessoa;
                 Date dataNascimento;
                 String cpf1;
+                String nomeVacinaAgendada;
 
                 
                 
@@ -251,7 +267,10 @@ public class Menu {
                 nomePessoa = scan.nextLine();
                 dataNascimento = formato.parse(scan.nextLine());
                 cpf1 = scan.nextLine();
-
+                nomeVacinaAgendada = scan.nextLine();
+                
+                //encontrando vacina e Ubs no respectivos mapas de acordo com as chaves lidas
+                Vacina vacinaAgendada = mapaVacina.get(nomeVacinaAgendada);
                 Ubs ubsAgendamento = mapaUbs.get(siglaU);
                 
                 ubsAgendamento.contaAgendados();
@@ -262,9 +281,13 @@ public class Menu {
                 }
                 
                 mapaAgendamento.put(cpf1,
-                        new AgendarVacinacao(dataHora, ubsAgendamento, nomePessoa, dataNascimento, cpf1));
+                        new AgendarVacinacao(dataHora, ubsAgendamento, nomePessoa, dataNascimento, cpf1, vacinaAgendada));
+                
+                AgendarVacinacao agendamento = mapaAgendamento.get(cpf1); //pegando agendamento do mapa para adicionar na lista
+                
+                listaCidadaosAgendados.add(agendamento); //adicionando novo agendamento na lista de cidadaos agendados
 
-                /* AgendarVacinacao agendamento = mapaAgendamento.get(cpf1); */
+                
                 // System.out.print("Data e Hora: ");
                 // System.out.println(formato2.format(agendamento.getDataHora()));
                 // System.out.print("Nome Paciente:");
@@ -424,6 +447,27 @@ public class Menu {
             		break;
             	case 3:
             		System.out.println("Comunicados aos cidadão vacinados");
+            		
+            		for(int i = 0; i < listaCidadaosAgendados.size(); i++) {
+            			System.out.println("Nome:" + listaCidadaosAgendados.get(i).getNome());
+            			System.out.println("Idade:" + listaCidadaosAgendados.get(i).getIdade());
+
+            			//verificando se a vacina é dose única ou não
+            			if(listaCidadaosAgendados.get(i).getVacinaAgendada().getLink() != null) {
+            				System.out.println("Link dose única:" + listaCidadaosAgendados.get(i).getVacinaAgendada().getLink());
+            			}else { //caso seja dose dupla
+            				System.out.println("Intervalos dose dupla:" );
+            				System.out.println(listaCidadaosAgendados.get(i).getVacinaAgendada().getIntervaloMin() + " - " + listaCidadaosAgendados.get(i).getVacinaAgendada().getIntervaloMax());
+            			}
+            			//verificando se ha efeitos colaterais registrados
+            			if(listaCidadaosAgendados.get(i).getVacinaAgendada().getEfeitosColaterais() != null) {
+            				for(int j = 0; j < listaCidadaosAgendados.get(i).getVacinaAgendada().getEfeitosColaterais().size(); j++){
+            					System.out.println(listaCidadaosAgendados.get(i).getVacinaAgendada().getEfeitosColaterais().get(j));
+            				}
+            			}
+            			
+            		}
+            		
             		break;
             	default:
             		break;
@@ -434,9 +478,34 @@ public class Menu {
                 break;              
             case 9:
             	System.out.println("Salvar");
+            	System.out.println("Informe o nome do arquivo");
+            	nomeArq = scan.nextLine();
+            	// Serializa um objeto no formato binário em um arquivo
+            	  // armazenado no local do segundo parâmetro
+            	  
+            	saveObject(vacina, nomeArq);
+
+            	
             	break;
             case 10:
             	System.out.println("Carregar");
+            	
+          	  // Deserializa o objeto armazenado no caminho passado e retorna este
+          	  // objeto sem nenhum tipo de casting
+          	  private static Object loadObject(String filename) throws ClassNotFoundException, IOException {
+          	    // Abre o arquivo para a leitura
+          	    ObjectInputStream objstream = new ObjectInputStream(new FileInputStream(filename));
+
+          	    // Lê os bytes e cria o objeto na memória
+          	    Object object = objstream.readObject();
+
+          	    // Fecha o arquivo
+          	    objstream.close();
+
+          	    // Retorna o objeto sem casting
+          	    return object;
+          	  }
+            	
             	break;
             case 11: //encerra programa
             	break;
@@ -458,6 +527,18 @@ public class Menu {
     	Collections.sort(listaVacina, Comparator.comparing(Vacina::getNomeVacina));
     }
     
+    //função para escrita em arquivo
+    private static void saveObject(Serializable object, String nomeArq) throws IOException {
+	    // Criando o arquivo e o objeto da classe ObjectOutputStream
+	    ObjectOutputStream objstream = new ObjectOutputStream(new FileOutputStream(nomeArq));
+
+	    // O método writeObject() automaticamente transforma o conteúdo do
+	    // objeto em bytes. Se a classe não implementar Serialize, um erro será gerado
+	    objstream.writeObject(object);
+
+	    // Fechando o arquivo e salvando os dados
+	    objstream.close();
+	  }
     
     
     // public void printaStatus(boolean statusEfetuado, boolean statusAgendado) {

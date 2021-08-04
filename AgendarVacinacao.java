@@ -1,3 +1,4 @@
+import java.util.Calendar;
 import java.util.Date;
 
 public class AgendarVacinacao {
@@ -8,8 +9,9 @@ public class AgendarVacinacao {
     private String cpf;
     private boolean statusAgendamento;
     private boolean statusEfetuado;
+    private Vacina vacinaAgendada;
 
-    public AgendarVacinacao(Date dataHora, Ubs ubs, String nome, Date dataNascimento, String cpf) {
+    public AgendarVacinacao(Date dataHora, Ubs ubs, String nome, Date dataNascimento, String cpf, Vacina vac) {
         this.dataHora = dataHora;
         this.ubs = ubs;
         this.nome = nome;
@@ -17,9 +19,25 @@ public class AgendarVacinacao {
         this.cpf = cpf;
         this.statusAgendamento = true;
         this.statusEfetuado = false;
+        this.vacinaAgendada = vac;
     }
 
-    public Date getDataHora() {
+    public int getIdade() {
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime(this.dataNascimento);
+        int dateYear = calendar.get(Calendar.YEAR);
+    	
+        int idade = 2021 - dateYear;    			
+    			
+    	return idade;
+    }
+    
+    public Vacina getVacinaAgendada() {
+		return vacinaAgendada;
+	}
+
+	public Date getDataHora() {
         return this.dataHora;
     }
 
