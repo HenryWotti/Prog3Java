@@ -383,7 +383,7 @@ public class Menu implements Serializable {
                 System.out.println("Digite o CPF");
                 String cpf2; // chave para achar o agendamento
 
-                cpf2 = scan.nextLine();
+                cpf2 = scan.nextLine();    
 
                 boolean cpf2Validacao = in.verificaEntradaNumerica(cpf2);
                 if(cpf2Validacao == false) {
@@ -412,8 +412,9 @@ public class Menu implements Serializable {
                 for (Map.Entry<String, AgendarVacinacao> entry : mapaAgendamento.entrySet()) {
                     System.out.println(entry.getValue());
                 }
-                System.out.println("Digite o CPF");
+                System.out.println("Digite o CPF e a MATRICULA do servidor");
                 String cpf3;
+                String matricula3;
 
                 cpf3 = scan.nextLine();
                 boolean cpf3Validacao = in.verificaEntradaNumerica(cpf3);
@@ -421,7 +422,13 @@ public class Menu implements Serializable {
                 	System.out.println("Dado inválido: " + cpf3);
                 	break;
                 }
-
+                
+                matricula3 = scan.nextLine(); 
+                ServidorMunicipal servidorM = mapaServidor.get(matricula3);
+                if(servidorM == null) {
+                	System.out.println("Servidor não encontrado");
+                }
+                                             
                 // achar o agendamento pelo cpf e validar
                 AgendarVacinacao agendamentoEfetua = mapaAgendamento.get(cpf3);
                 boolean efetuaValidacao = in.verificaCPF(agendamentoEfetua);
@@ -433,13 +440,25 @@ public class Menu implements Serializable {
                 Ubs ubsRegistrad = agendamentoEfetua.getUbs();
                 ubsRegistrad.contaVacinados();
 
+                //verificar melhor depois, mapa é o ideal? fica a indagação
                 Vacina vacinaEfetuada = agendamentoEfetua.getVacinaAgendada();
                 Lote loteDaVac = mapaLotes.get(vacinaEfetuada);
+                if(loteDaVac == null) {
+                	System.out.println(ubsRegistrad.getNome() + " nao possui a vacina " + vacinaEfetuada.getNomeVacina() + " (" + vacinaEfetuada.getDoenca() + ") em estoque em " + agendamentoEfetua.getDataHora());
+                	break;
+                }
                 Ubs ubsDaVac = loteDaVac.getUbs();
                 
                 boolean vacinaNaUbs = in.verificaVacinaNaUbs(ubsDaVac, ubsRegistrad);
                 if(!vacinaNaUbs) {
                 	System.out.println(ubsRegistrad.getNome() + " nao possui a vacina " + vacinaEfetuada.getNomeVacina() + " (" + vacinaEfetuada.getDoenca() + ") em estoque em " + agendamentoEfetua.getDataHora());
+                	break;
+                }
+                //pegamos a ubs que o servidor informado pela matricula trabalha
+                Ubs ubsServidor2 = servidorM.getUbs();
+                boolean ubsServidorValidacao = in.verificaUbsDoServidor(ubsServidor2, agendamentoEfetua.getUbs());
+                if(!ubsServidorValidacao) {
+                	System.out.println("Servidor " + servidorM.getNomeCompleto() + "(Matricula: " + matricula3 + ") nao esta lotado na " + agendamentoEfetua.getUbs().getNome() + ".");
                 	break;
                 }
                 
@@ -470,54 +489,8 @@ public class Menu implements Serializable {
             		
             		break;
             	case 2:
-            		int contTotalDoses = 0;
-            		int contDosesFederal = 0;
-            		double contCustoFederal = 0;
-            		int contDosesEstadual = 0;
-            		double contCustoEstadual = 0;
-            		String federal = "f";
-            		double mediaFederal = 0;
-            		double mediaEstadual = 0;
-            		
-            		System.out.println("Entregas de Vacina por Doença");
-            		ordenaVacina(listaVacinas);
-            		for(int i = 0; i < listaNomeDoencas.size(); i++) {
-            			System.out.println(listaNomeDoencas.get(i));
-            			
-            			for (int j = 0; j < listaVacinas.size(); j++) {
-                           
-            				if(listaNomeDoencas.get(i).compareTo(listaVacinas.get(j).getDoenca()) == 0) {
-                            	System.out.println(listaVacinas.get(j));
-                            	
-                            	for(int k = 0; k < listaLotes.size(); k++) {
-                            		if(listaVacinas.get(j).getNomeVacina().compareTo(listaLotes.get(k).getVacina().getNomeVacina()) == 0) {
-                            			contTotalDoses += listaLotes.get(k).getQuantidade(); //quantidade total de doses recebidas para a doenca
-                            			
-                            			if(listaLotes.get(k).getFonte().compareTo(federal) == 0){
-                            				contDosesFederal+= listaLotes.get(k).getQuantidade(); //total de doses vindas do governo federal
-                            				contCustoFederal += listaLotes.get(k).getCustoPorDose() *  listaLotes.get(k).getQuantidade(); //soma dos custos das doses federais com peso
-                            			}else {
-                            				contDosesEstadual += listaLotes.get(k).getQuantidade(); //total de doses vindas do governo estadual
-                            				contCustoEstadual += listaLotes.get(k).getCustoPorDose() *  listaLotes.get(k).getQuantidade(); //soma dos custos das doses estaduais com peso
-                            			}                         			
-                            			
-                            		}
-                            	}
-                            	mediaFederal = contCustoFederal / contDosesFederal; //custo medio das doses entregues pelo governo federal
-                            	mediaEstadual = contCustoEstadual / contDosesEstadual; //custo medio das doses entregues pelo governo estadual
-                            	                         	
-                            	
-                            }
-                        }
-            			System.out.println("Total de doses para essa doenca:" + contTotalDoses);
-                    	System.out.println("Media custo Federal" + mediaFederal);
-                    	System.out.println("Media custo Estadual" + mediaEstadual);
-                    	contDosesFederal = 0;
-                    	contDosesEstadual = 0;
-                    	contCustoFederal = 0;
-                    	contCustoEstadual = 0;
-                    	contTotalDoses = 0;
-            		}
+            		Lote loteRelatorio = new Lote();
+            		loteRelatorio.relatorio2(listaVacinas, listaNomeDoencas, listaLotes);
             		
             		break;
             	case 3:
@@ -581,9 +554,7 @@ public class Menu implements Serializable {
 //    	Collections.sort(listaDoenca);
 //    }
     
-    public void ordenaVacina(ArrayList<Vacina> listaVacina) {
-    	Collections.sort(listaVacina, Comparator.comparing(Vacina::getNomeVacina));
-    }
+    
       
     
 }

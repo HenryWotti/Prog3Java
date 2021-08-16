@@ -6,12 +6,13 @@ public class Vacina implements Serializable {
     private String nomeVacina;
     private String fabricante;
     private String doenca;
-    private String link;
-    private int intervaloMax;
-    private int intervaloMin;
+//    private String link;
+//    private int intervaloMax;
+//    private int intervaloMin;
     private ArrayList<String> efeitosColaterais;
 
     public Vacina(String nomeVacina, String doenca) {
+    	super();
         this.nomeVacina = nomeVacina;
         this.doenca = doenca;
     }

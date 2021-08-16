@@ -124,12 +124,29 @@ public class Inputs {
 	}
 	
 	public boolean verificaVacinaNaUbs(Ubs ubsDaVacina, Ubs ubsInformada) {
+		if(ubsDaVacina == null) {
+			return false;
+		}
+		
 		if(ubsDaVacina == ubsInformada) {
 			return true;
-		}else {
+		}else{
 			return false;
 		}
 	}
+	
+	public boolean verificaUbsDoServidor(Ubs ubsDoServidor, Ubs ubsInformada) {
+		if(ubsDoServidor == null) {
+			return false;
+		}
+		
+		if(ubsDoServidor == ubsInformada) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 }
 
 
