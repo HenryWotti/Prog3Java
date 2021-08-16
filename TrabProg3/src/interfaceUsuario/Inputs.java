@@ -122,6 +122,14 @@ public class Inputs {
 			return false;
 		}
 	}
+	
+	public boolean verificaVacinaNaUbs(Ubs ubsDaVacina, Ubs ubsInformada) {
+		if(ubsDaVacina == ubsInformada) {
+			return true;
+		}else {
+			return false;
+		}
+	}
 }
 
 

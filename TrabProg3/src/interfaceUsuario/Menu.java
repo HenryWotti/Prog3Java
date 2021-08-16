@@ -42,6 +42,7 @@ public class Menu implements Serializable {
     ArrayList<String> listaNomeDoencas = new ArrayList<String>();
     ArrayList<Vacina> listaVacinas = new ArrayList<Vacina>();
     ArrayList<AgendarVacinacao> listaCidadaosAgendados = new ArrayList<AgendarVacinacao>();
+    Map<Vacina, Lote> mapaLotes = new HashMap<>();
     
     String nomeArq;
     //File arq = new File(nomeArq);
@@ -280,9 +281,10 @@ public class Menu implements Serializable {
                 	data1 = formato.parse(dataEntrega);
                 }
                 
-                //registrando lote e adicionando na lista de lotes
+                //registrando lote e adicionando na lista e no mapa de lotes
                 Lote lote = new Lote(vacinaDoLote, ubsLote, data1, quantidade, custoPorDose, fonte);
                 listaLotes.add(lote);
+                mapaLotes.put(vacinaDoLote, lote);
 
                 break;
 
@@ -343,6 +345,13 @@ public class Menu implements Serializable {
                 	break;
                 }
    
+                AgendarVacinacao teste4 = mapaAgendamento.get(cpf1);
+                boolean agendamentoRepetidoValidacao = in.verificaAgendamentoRepetido(teste4);
+                if(!agendamentoRepetidoValidacao) {
+                	System.out.println("Cadastro repetido: " + cpf1);
+                	break;
+                }
+                
                 //encontrando e validando a vacina informada
                 Vacina vacinaAgendada = mapaVacina.get(nomeVacinaAgendada);
                 boolean vacinaValidacao = in.verificaVacina(vacinaAgendada);
@@ -424,6 +433,16 @@ public class Menu implements Serializable {
                 Ubs ubsRegistrad = agendamentoEfetua.getUbs();
                 ubsRegistrad.contaVacinados();
 
+                Vacina vacinaEfetuada = agendamentoEfetua.getVacinaAgendada();
+                Lote loteDaVac = mapaLotes.get(vacinaEfetuada);
+                Ubs ubsDaVac = loteDaVac.getUbs();
+                
+                boolean vacinaNaUbs = in.verificaVacinaNaUbs(ubsDaVac, ubsRegistrad);
+                if(!vacinaNaUbs) {
+                	System.out.println(ubsRegistrad.getNome() + " nao possui a vacina " + vacinaEfetuada.getNomeVacina() + " (" + vacinaEfetuada.getDoenca() + ") em estoque em " + agendamentoEfetua.getDataHora());
+                	break;
+                }
+                
                 // registra agendamento como vacinacao efetuada
                 agendamentoEfetua.efetuaVacinacao();
 
@@ -529,8 +548,7 @@ public class Menu implements Serializable {
             		break;
             		
             	}
-            	
-            	
+ 	
                 break;              
             case 9:
             	System.out.println("Salvar");
