@@ -6,15 +6,24 @@ public class Vacina implements Serializable {
     private String nomeVacina;
     private String fabricante;
     private String doenca;
-//    private String link;
-//    private int intervaloMax;
-//    private int intervaloMin;
+    private String link;
+    private int intervaloMax;
+    private int intervaloMin;
     private ArrayList<String> efeitosColaterais;
 
-    public Vacina(String nomeVacina, String doenca) {
-    	super();
+    public Vacina(String nomeVacina, String doenca, String link) {
+    	//super();
         this.nomeVacina = nomeVacina;
         this.doenca = doenca;
+        this.link = link;
+    }
+    
+    public Vacina(String nomeVacina, String doenca, int intervaloMin, int intervaloMax) {
+    	//super();
+        this.nomeVacina = nomeVacina;
+        this.doenca = doenca;
+        this.intervaloMin = intervaloMin;
+        this.intervaloMax = intervaloMax;
     }
 
     public String getNomeVacina() {
@@ -29,34 +38,22 @@ public class Vacina implements Serializable {
         return this.fabricante;
     }
 
-    public void setFabricante(String fabricante) {
+    public String getLink() {
+		return link;
+	}
+
+	public int getIntervaloMax() {
+		return intervaloMax;
+	}
+
+	public int getIntervaloMin() {
+		return intervaloMin;
+	}
+
+	public void setFabricante(String fabricante) {
         this.fabricante = fabricante;
     }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public String getLink() {
-        return this.link;
-    }
-
-    public int getIntervaloMax() {
-        return this.intervaloMax;
-    }
-
-    public int getIntervaloMin() {
-        return this.intervaloMin;
-    }
-
-    public void setIntervaloMax(int intervaloMax) {
-        this.intervaloMax = intervaloMax;
-    }
-
-    public void setIntervaloMin(int intervaloMin) {
-        this.intervaloMin = intervaloMin;
-    }
-
+    
     @Override
     public String toString() {
         return nomeVacina + ";" + doenca + ";" + fabricante;

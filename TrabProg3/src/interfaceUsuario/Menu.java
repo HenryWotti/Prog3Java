@@ -15,6 +15,7 @@ import elementosDoDominio.Lote;
 import elementosDoDominio.ServidorMunicipal;
 import elementosDoDominio.Ubs;
 import elementosDoDominio.Vacina;
+import entradaSaida.Escritor;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -22,8 +23,6 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
-
 
 public class Menu implements Serializable {
 
@@ -160,8 +159,6 @@ public class Menu implements Serializable {
                 int intervaloMin;
                 int intervaloMax;
                 ArrayList<String> listaDeEfeitos = new ArrayList<String>();
-                
-
                 nomeVacina = scan.nextLine();
                 doenca = scan.nextLine();
                 
@@ -180,13 +177,29 @@ public class Menu implements Serializable {
                 }
                 if(cont == listaNomeDoencas.size()) {
             		listaNomeDoencas.add(doenca); //adicionando na lista de nome de doencas para ordenar e imprimir o relatorio 2
-            	}
+            	}  
                 
-                // colocar vacina em uma mapa de vacinas, sua chave será seu nome
-                mapaVacina.put(nomeVacina, new Vacina(nomeVacina, doenca));
+                System.out.println("A vacina é de dose única? Digite 1 para sim e 0 para nao");
+                int confereDose;
+                confereDose = scan.nextInt();
+                lixo = scan.nextLine();
+                if (confereDose == 1) {
+                    System.out.println("Forneca o link:");
+                    link = scan.nextLine();
+                    // colocar vacina em uma mapa de vacinas, sua chave será seu nome
+                    mapaVacina.put(nomeVacina, new Vacina(nomeVacina, doenca, link));
+                } else {
+                    System.out.println("Forneca respectivamente o intervalo min e max entre doses:");
+                    intervaloMin = scan.nextInt();
+                    lixo = scan.nextLine();
+                    intervaloMax = scan.nextInt();
+                    lixo = scan.nextLine();
+                    // colocar vacina em uma mapa de vacinas, sua chave será seu nome
+                    mapaVacina.put(nomeVacina, new Vacina(nomeVacina, doenca, intervaloMin, intervaloMax));
+                }
+                
                 Vacina vacina = mapaVacina.get(nomeVacina);
-                
-                listaVacinas.add(vacina); //adiciona vacina na lista de vacinas
+                listaVacinas.add(vacina); //adiciona vacina na lista de vacinas	
                 
                 System.out.println("Deseja cadastrar a fabricante? Digite 1 para sim ou 0 para nao");
                 int cadastroOpcional2;
@@ -196,24 +209,6 @@ public class Menu implements Serializable {
                     System.out.println("Digite o fabricante:");
                     fabricante = scan.nextLine();
                     vacina.setFabricante(fabricante);
-                }
-
-                System.out.println("A vacina é de dose única? Digite 1 para sim e 0 para nao");
-                int confereDose;
-                confereDose = scan.nextInt();
-                lixo = scan.nextLine();
-                if (confereDose == 1) {
-                    System.out.println("Forneca o link:");
-                    link = scan.nextLine();
-                    vacina.setLink(link);
-                } else {
-                    System.out.println("Forneca respectivamente o intervalo min e max entre doses:");
-                    intervaloMin = scan.nextInt();
-                    lixo = scan.nextLine();
-                    intervaloMax = scan.nextInt();
-                    lixo = scan.nextLine();
-                    vacina.setIntervaloMin(intervaloMin);
-                    vacina.setIntervaloMax(intervaloMax);
                 }
 
                 System.out.println("A vacina possui efeito colateral forte? Digite 1 para sim e 0 para nao");
@@ -512,8 +507,7 @@ public class Menu implements Serializable {
             				for(int j = 0; j < listaCidadaosAgendados.get(i).getVacinaAgendada().getEfeitosColaterais().size(); j++){
             					System.out.println(listaCidadaosAgendados.get(i).getVacinaAgendada().getEfeitosColaterais().get(j));
             				}
-            			}
-            			
+            			}     			
             		}
             		
             		break;
@@ -527,6 +521,9 @@ public class Menu implements Serializable {
             	System.out.println("Salvar");
             	System.out.println("Informe o nome do arquivo");
             	nomeArq = scan.nextLine();
+            	Escritor escritor = new Escritor();
+            	escritor.escritor(nomeArq);
+            	escritor.serializar(listaUbs);
             	// Serializa um objeto no formato binário em um arquivo
             	  // armazenado no local do segundo parâmetro
             	  
@@ -535,7 +532,14 @@ public class Menu implements Serializable {
             	
             	break;
             case 10:
-
+            	System.out.println("Carregando...");
+            	Escritor escritor2 = new Escritor();
+            	System.out.println("Informe o nome do arquivo");
+            	nomeArq = scan.nextLine();
+            	escritor2.escritor(nomeArq);
+            	ArrayList<Ubs> listaUbsDescarregada = new ArrayList<Ubs>();
+            	listaUbsDescarregada = escritor2.desserializar();
+            	listaUbs.addAll(listaUbsDescarregada);
             	
             	break;
             case 11: //encerra programa
